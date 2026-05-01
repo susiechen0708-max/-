@@ -12,7 +12,7 @@
 
   <!-- iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="基北交通">
+  <meta name="apple-mobile-web-app-title" content="基北高中職交通">
 
   <style>
     body { margin:0; font-family: sans-serif; }
@@ -86,10 +86,10 @@ justify-content:center;
 font-size:22px;
 z-index:9999;
 ">
-基北高中交通
+基北高中職交通
 </div>
 
-<div class="topbar">基北高中交通</div>
+<div class="topbar">基北高中職交通</div>
 
 <div class="hint">
 👉 點地圖看學校 → 點「記錄」→ 再比較
@@ -108,8 +108,8 @@ z-index:9999;
 
 <!-- 快速比較 -->
 <div class="quick">
-<button onclick="quickCompare('建國中學','北一女中')">建中vs北一女</button>
-<button onclick="quickCompare('中和高中','永平高中')">中和vs永平</button>
+<button onclick="quickCompare('建國中學','北一女中')">建國vs北一</button>
+<button onclick="quickCompare('海山高中','雙溪高中')">海山vs雙溪</button>
 </div>
 
 <!-- 提示 -->
@@ -126,7 +126,7 @@ font-size:13px;
 display:none;
 z-index:999;
 ">
-👉 加到主畫面，下次直接點
+👉 加到手機主畫面，下次直接點
 </div>
 
 <script>
@@ -153,11 +153,11 @@ if(!localStorage.getItem("pwaTipShown")){
 
 // 分享
 function shareLink(){
-  const text = "我都用這個看高中職交通👉";
+  const text = "我都用這個看 基北高中職交通 👉";
   const url = window.location.href;
 
   if(navigator.share){
-    navigator.share({ title:"基北高中交通", text:text, url:url });
+    navigator.share({ title:"基北高中職交通", text:text, url:url });
   }else{
     prompt("複製連結分享：", url);
   }
@@ -196,7 +196,7 @@ function compareSchools(){
     if(!s2) return;
   }
 
-  let origin = prompt("你的出發地（例如：台北火車站）");
+  let origin = prompt("你的目的地（例如：建國中學）");
   if(!origin) return;
 
   openCompare(origin, s1, s2);
@@ -228,5 +228,7 @@ function openCompare(origin, s1, s2){
 
 </script>
 
+</body>
+</html>
 </body>
 </html>
