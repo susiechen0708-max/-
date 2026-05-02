@@ -5,9 +5,7 @@
 <title>基北高中交通</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" href="icon.png">
 <meta name="theme-color" content="#2c3e50">
 
 <style>
@@ -16,44 +14,53 @@ body { margin:0; font-family:sans-serif; }
 .topbar {
   background:#2c3e50;
   color:white;
-  text-align:center;
   padding:10px;
+  text-align:center;
+}
+
+.search-box {
+  display:flex;
+  padding:8px;
+  background:#ecf0f1;
+}
+
+.search-box input {
+  flex:1;
+  padding:8px;
+}
+
+.search-box button {
+  padding:8px;
 }
 
 iframe {
   width:100%;
-  height:60vh;
+  height:55vh;
   border:none;
 }
 
 .btn {
   position:fixed;
   right:15px;
-  border:none;
-  color:white;
   padding:12px;
+  border:none;
   border-radius:20px;
-  z-index:999;
+  color:white;
 }
 
 .share { bottom:15px; background:#3498db; }
 .compare { bottom:70px; background:#27ae60; }
-.save { bottom:125px; background:#f39c12; }
+.add { bottom:125px; background:#e67e22; }
 
-.result {
+.list {
   padding:10px;
 }
 
-.card {
+.item {
   background:#f4f4f4;
-  margin:8px 0;
-  padding:10px;
-  border-radius:10px;
-}
-
-.big {
-  font-size:18px;
-  font-weight:bold;
+  margin:5px 0;
+  padding:8px;
+  border-radius:8px;
 }
 </style>
 </head>
@@ -62,82 +69,122 @@ iframe {
 
 <div class="topbar">基北高中交通</div>
 
+<!-- 搜尋 -->
+<div class="search-box">
+<input id="searchInput" placeholder="輸入學校名稱（點地圖後可直接貼）">
+<button onclick="searchSchool()">🔍</button>
+</div>
+
 <iframe src="https://www.google.com/maps/d/embed?mid=1CwyqZQ0mLL4afResvNH5t1q2QB5xIYw"></iframe>
+
+<!-- 比較清單 -->
+<div class="list">
+<h3>比較清單（最多5間）</h3>
+<div id="compareList"></div>
+</div>
 
 <button class="btn share" onclick="shareLink()">分享</button>
 <button class="btn compare" onclick="compare()">開始比較</button>
-<button class="btn save" onclick="saveSchool()">記錄學校</button>
-
-<div id="result" class="result"></div>
+<button class="btn add" onclick="addFromInput()">加入比較</button>
 
 <script>
 
-// 分享
-function shareLink(){
-  let url = location.href;
-  let text = "我都用這個看通勤👉";
+let list = JSON.parse(localStorage.getItem("compareList")||"[]");
+renderList();
 
-  if(navigator.share){
-    navigator.share({title:"基北高中交通", text:text, url:url});
-  }else{
-    prompt("複製連結：", url);
-  }
+// 搜尋（並記錄）
+function searchSchool(){
+  let q = document.getElementById("searchInput").value;
+  if(!q) return;
+
+  localStorage.setItem("lastSearch", q);
+
+  let url = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
+  window.open(url);
 }
 
-// 記錄學校（最多5個）
-function saveSchool(){
-  let name = prompt("輸入學校名稱");
-  if(!name) return;
+// 從輸入框加入（核心）
+function addFromInput(){
+  let input = document.getElementById("searchInput");
+  let name = input.value || localStorage.getItem("lastSearch");
 
-  let list = JSON.parse(localStorage.getItem("schools")||"[]");
-
-  if(!list.includes(name)){
-    if(list.length>=5){
-      list.shift(); // 移除最舊
-    }
-    list.push(name);
+  if(!name){
+    name = prompt("請輸入學校名稱");
   }
 
-  localStorage.setItem("schools", JSON.stringify(list));
+  if(!name) return;
 
-  alert("已記錄：" + list.join("、"));
+  if(list.includes(name)){
+    alert("已加入");
+    return;
+  }
+
+  if(list.length>=5){
+    alert("最多5間");
+    return;
+  }
+
+  list.push(name);
+  save();
+
+  input.value = ""; // 清空
+}
+
+// 移除
+function removeSchool(name){
+  list = list.filter(s=>s!==name);
+  save();
+}
+
+// 顯示清單
+function renderList(){
+  let div = document.getElementById("compareList");
+  div.innerHTML="";
+
+  list.forEach(s=>{
+    div.innerHTML += `
+      <div class="item">
+        ${s}
+        <button onclick="removeSchool('${s}')">退出比較</button>
+      </div>
+    `;
+  });
+}
+
+// 儲存
+function save(){
+  localStorage.setItem("compareList", JSON.stringify(list));
+  renderList();
 }
 
 // 比較
 function compare(){
-  let list = JSON.parse(localStorage.getItem("schools")||"[]");
-
   if(list.length<2){
-    alert("請先記錄至少2間學校");
+    alert("請至少2間");
     return;
   }
 
-  let origin = prompt("輸入出發地（例如：板橋車站）");
+  let origin = prompt("輸入出發地（例如：台北車站）");
   if(!origin) return;
 
-  showResult(origin, list);
-}
-
-// 顯示結果（核心）
-function showResult(origin, schools){
-  let div = document.getElementById("result");
-  div.innerHTML = "<h3>通勤比較（從："+origin+"）</h3>";
-
-  schools.forEach(s=>{
+  list.forEach(s=>{
     let url = "https://www.google.com/maps/dir/?api=1&origin="
       + encodeURIComponent(origin)
       + "&destination=" + encodeURIComponent(s)
       + "&travelmode=transit";
 
-    div.innerHTML += `
-      <div class="card">
-        <div class="big">${s}</div>
-        <a href="${url}" target="_blank">👉 查看通勤路線</a>
-      </div>
-    `;
+    window.open(url);
   });
+}
 
-  window.scrollTo(0, document.body.scrollHeight);
+// 分享
+function shareLink(){
+  let url = location.href;
+  if(navigator.share){
+    navigator.share({title:"基北高中交通", text:"我都用這個👉", url:url});
+  }else{
+    prompt("複製：", url);
+  }
 }
 
 </script>
