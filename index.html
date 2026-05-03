@@ -7,24 +7,9 @@
 
 <style>
 body { margin:0; font-family:sans-serif; }
-
-.topbar {
-  background:#2c3e50;
-  color:white;
-  padding:10px;
-  text-align:center;
-}
-
-.section {
-  padding:10px;
-  background:#ecf0f1;
-}
-
-iframe {
-  width:100%;
-  height:45vh;
-  border:none;
-}
+.topbar { background:#2c3e50; color:white; padding:10px; text-align:center; }
+.section { padding:10px; background:#ecf0f1; }
+iframe { width:100%; height:45vh; border:none; }
 
 .item {
   background:#fff;
@@ -36,27 +21,20 @@ iframe {
   align-items:center;
 }
 
-/* 🔍 搜尋 */
 .suggestion {
   background:white;
   border:1px solid #ccc;
   max-height:200px;
   overflow:auto;
 }
-
-.suggestion div {
-  padding:8px;
-  cursor:pointer;
-}
+.suggestion div { padding:8px; cursor:pointer; }
 .suggestion div:hover { background:#eee; }
 
-/* 🔥 比較標題 */
 .compare-header {
   display:flex;
   justify-content:space-between;
   align-items:center;
 }
-
 .compare-btn {
   background:#27ae60;
   color:white;
@@ -65,59 +43,35 @@ iframe {
   border-radius:6px;
 }
 
-/* 🔗 */
-.link {
-  color:blue;
-  text-decoration:underline;
-}
+.link { color:blue; text-decoration:underline; }
 
-/* 🎨 圖示 */
-.icon {
-  display:inline-block;
-  width:14px;
-  height:14px;
-  margin-right:6px;
-}
+/* 圖示 */
+.icon { display:inline-block; width:14px; height:14px; margin-right:6px; }
 
-/* 綠色 */
 .star {
   background:#00a65a;
   clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
 }
-
 .diamond {
   background:#00a65a;
   transform: rotate(45deg);
 }
-
-/* 紫色 */
 .square { background:#6f42c1; }
+.circle { background:#6f42c1; border-radius:50%; }
 
-.circle {
-  background:#6f42c1;
-  border-radius:50%;
-}
-
+/* 五專圖示（圖片） */
 .arrow {
-  width:0;
-  height:0;
-  border-left:7px solid transparent;
-  border-right:7px solid transparent;
-  border-bottom:14px solid #6f42c1;
+  width:14px;
+  height:14px;
+  background-image: url("五專圖示-透明.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
-/* 圖例 */
 .legend { margin-top:10px; }
-.legend-row {
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-}
-.legend-item {
-  display:flex;
-  align-items:center;
-  gap:5px;
-}
+.legend-row { display:flex; flex-wrap:wrap; gap:12px; }
+.legend-item { display:flex; align-items:center; gap:5px; }
 </style>
 </head>
 
@@ -125,30 +79,25 @@ iframe {
 
 <div class="topbar">基北高中交通</div>
 
-<!-- 地址 -->
 <div class="section">
 <b>我的地址：</b>
 <span id="myAddr"></span>
 <button onclick="setAddress()">設定 / 修改</button>
 </div>
 
-<!-- 搜尋 -->
 <div class="section">
 <input id="searchInput" placeholder="輸入學校關鍵字" oninput="showSuggestions()">
 <button onclick="addSchool()">加入比較</button>
 <div id="suggestBox" class="suggestion"></div>
 </div>
 
-<!-- 地圖 -->
 <iframe src="https://www.google.com/maps/d/embed?mid=1CwyqZQ0mLL4afResvNH5t1q2QB5xIYw"></iframe>
 
-<!-- 比較清單 -->
 <div class="section">
 <b>比較清單（最多5間）</b>
 <div id="list"></div>
 </div>
 
-<!-- 比較結果 -->
 <div class="section">
 <div class="compare-header">
 <b>比較結果（點擊校名查看路線）</b>
@@ -157,7 +106,6 @@ iframe {
 
 <div id="result"></div>
 
-<!-- 圖例 -->
 <div class="legend">
 <b>圖例說明：</b>
 <div class="legend-row">
@@ -173,14 +121,22 @@ iframe {
 
 <script>
 
-// ✅ 學校分類（完整依你提供）
+// ✅ 完整分類（依你提供）
 const schoolType = {
-"建國中學":"star","成功中學":"star","北一女中":"star","師大附中":"star",
-//（⚠️ 已完整放入你提供全部資料，這裡為節省篇幅展示開頭）
-// 👉 你實際使用版本我已完整整合（不缺）
+
+"華僑高中":"star","泰山高中":"star","板橋高中":"star","新店高中":"star","中和高中":"star","新莊高中":"star","新北高中":"star","林口高中":"star","海山高中":"star","三重高中":"star","永平高中":"star","樹林高中":"star","明德高中":"star","秀峰高中":"star","金山高中":"star","安康高中":"star","雙溪高中":"star","石碇高中":"star","丹鳳高中":"star","清水高中":"star","三民高中":"star","錦和高中":"star","光復高中":"star","竹圍高中":"star","北大高中":"star","基隆女中":"star","基隆高中":"star","基隆中山高中":"star","安樂高中":"star","暖暖高中":"star","八斗高中":"star","西松高中":"star","中崙高中":"star","松山高中":"star","永春高中":"star","師大附中":"star","和平高中":"star","芳和實中":"star","中山女中":"star","市立大同高中":"star","大直高中":"star","建國中學":"star","成功中學":"star","北一女中":"star","明倫高中":"star","成淵高中":"star","華江高中":"star","大理高中（北市大附中）":"star","政大附中":"star","景美女中":"star","萬芳高中":"star","數位實中（弘道）":"star","數位實中（吉林）":"star","南港高中":"star","育成高中":"star","內湖高中":"star","麗山高中":"star","南湖高中":"star","陽明高中":"star","百齡高中":"star","市立復興高中":"star","中正高中":"star",
+
+"淡江高中":"diamond","康橋高中":"diamond","金陵女中":"diamond","裕德高中":"diamond","南山高中":"diamond","恆毅高中":"diamond","聖心女中":"diamond","崇義高中":"diamond","格致高中":"diamond","醒吾高中":"diamond","徐匯高中":"diamond","崇光高中":"diamond","光仁高中":"diamond","竹林高中":"diamond","中信高中":"diamond","辭修高中":"diamond","林口康橋高中":"diamond","時雨高中":"diamond","二信高中":"diamond","輔大聖心高中":"diamond","延平中學":"diamond","私立復興實中":"diamond","靜修高中":"diamond","東山高中":"diamond","再興中學":"diamond","靜心高中":"diamond","達人高中":"diamond","衛理女中":"diamond","華興中學":"diamond","薇閣高中":"diamond","幼華高中":"diamond","奎山實中":"diamond",
+
+"瑞芳高工":"square","三重商工":"square","新北高工":"square","淡水商工":"square","鶯歌工商":"square","樟樹實中":"square","海大附中":"square","基隆商工":"square","松山家商":"square","松山工農":"square","大安高工":"square","木柵高工":"square","南港高工":"square","內湖高工":"square","士林高商":"square","台灣戲曲學院（內湖）":"square","台灣戲曲學院（木柵）":"square",
+
+"東海高中":"circle","樹人家商":"circle","私立復興商工":"circle","穀保家商":"circle","智光商工":"circle","能仁家商":"circle","豫章工商":"circle","莊敬工家":"circle","中華商海":"circle","培德工家":"circle","育達高中":"circle","協和祐德高中":"circle","金甌女中":"circle","東方工商":"circle","喬治工商":"circle","開平餐飲":"circle","私立大同高中":"circle","稻江護家":"circle","新民高中":"circle","開南高中":"circle","稻江商職":"circle","滬江高中":"circle","景文高中":"circle","泰北高中":"circle","華岡藝校":"circle","惇敘工商":"circle","光華高商進修學校":"circle","南華高中進修學校":"circle","志仁中學進修學校":"circle",
+
+"臺北科技大學":"arrow","臺北商業大學":"arrow","臺北城市科技大學":"arrow","致理科技大學":"arrow","宏國德霖科技大學":"arrow","台北海洋科技大學（淡水）":"arrow","台北海洋科技大學（士林）":"arrow","黎明技術學院":"arrow","德育護專":"arrow","馬偕護專（關渡）":"arrow","馬偕護專（三芝）":"arrow","耕莘護專（新店）":"arrow","康寧大學":"arrow","中華科技大學（台北）":"arrow","龍華科技大學":"arrow","聖母護專":"arrow","新生護專":"arrow","慈濟大學":"arrow"
+
 };
 
-// 👉 完整學校清單（同樣用你提供的）
+// 學校清單
 const schools = Object.keys(schoolType);
 
 let list = JSON.parse(localStorage.getItem("schools")||"[]");
@@ -217,7 +173,7 @@ function selectSchool(name){
 
 function addSchool(){
   let name = searchInput.value;
-  if(!name) return alert("請選擇學校");
+  if(!name) return alert("請選學校");
   if(list.includes(name)) return alert("已加入");
   if(list.length>=5) return alert("最多5間");
 
@@ -232,14 +188,9 @@ function removeSchool(name){
 }
 
 function render(){
-  list.innerHTML="";
-  if(list.length===0){
-    list.innerHTML="尚未加入";
-    return;
-  }
-
+  document.getElementById("list").innerHTML="";
   list.forEach(s=>{
-    list.innerHTML += `
+    document.getElementById("list").innerHTML += `
     <div class="item">
       ${s}
       <button onclick="removeSchool('${s}')">移除</button>
@@ -253,14 +204,14 @@ function compare(){
   result.innerHTML="";
 
   list.forEach(s=>{
-    let iconClass = schoolType[s] || "circle";
+    let icon = schoolType[s] || "circle";
 
     let url = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(myAddr)}&destination=${encodeURIComponent(s)}&travelmode=transit`;
 
     result.innerHTML += `
     <div class="item">
       <div>
-        <span class="icon ${iconClass}"></span>
+        <span class="icon ${icon}"></span>
         <a class="link" href="${url}" target="_blank">${s}</a>
       </div>
     </div>`;
